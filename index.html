@@ -2,235 +2,322 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BAU Academy AR</title>
-    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>BAU Academy Future Screen</title>
     <style>
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         html, body {
             margin: 0;
             width: 100%;
             height: 100%;
-            background:
-                    radial-gradient(circle at top, #112244 0%, #050816 45%, #02030a 100%);
-            color: white;
-            font-family: Arial, sans-serif;
             overflow: hidden;
+            font-family: Arial, sans-serif;
+            background:
+                    radial-gradient(circle at top, #16356d 0%, #091224 35%, #04070f 70%, #010205 100%);
+            color: white;
         }
 
-        .overlay {
+        body {
+            position: relative;
+        }
+
+        .bg-grid {
             position: absolute;
             inset: 0;
+            background:
+                    linear-gradient(rgba(91, 179, 255, 0.08) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(91, 179, 255, 0.08) 1px, transparent 1px);
+            background-size: 30px 30px;
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0.25));
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0.25));
             pointer-events: none;
+        }
+
+        .glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(50px);
+            opacity: 0.55;
+            pointer-events: none;
+        }
+
+        .glow.one {
+            width: 260px;
+            height: 260px;
+            background: #1fa2ff;
+            top: 6%;
+            left: -60px;
+        }
+
+        .glow.two {
+            width: 220px;
+            height: 220px;
+            background: #7b5cff;
+            right: -40px;
+            top: 20%;
+        }
+
+        .glow.three {
+            width: 240px;
+            height: 240px;
+            background: #00d9ff;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .app {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 20px;
-            z-index: 10;
+            padding: 18px;
         }
 
-        .top {
+        .topbar {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             gap: 12px;
         }
 
         .brand {
-            padding: 10px 14px;
-            border: 1px solid rgba(92, 190, 255, 0.45);
-            border-radius: 16px;
-            background: rgba(11, 20, 40, 0.55);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 24px rgba(73, 160, 255, 0.16);
+            padding: 12px 14px;
+            border: 1px solid rgba(131, 209, 255, 0.35);
+            background: rgba(7, 16, 33, 0.45);
+            backdrop-filter: blur(14px);
+            border-radius: 18px;
+            box-shadow: 0 0 30px rgba(41, 157, 253, 0.15);
         }
 
-        .brand small {
-            display: block;
-            color: #7ed8ff;
-            letter-spacing: 2px;
+        .brand .mini {
             font-size: 11px;
-            margin-bottom: 4px;
+            letter-spacing: 2px;
+            color: #8fe5ff;
+            margin-bottom: 6px;
         }
 
-        .brand strong {
-            display: block;
-            font-size: 24px;
-            line-height: 1.1;
+        .brand .title {
+            font-size: 28px;
+            font-weight: 800;
+            line-height: 1;
         }
 
-        .badge {
+        .status {
             padding: 10px 14px;
             border-radius: 999px;
-            background: rgba(17, 31, 58, 0.75);
-            border: 1px solid rgba(126, 216, 255, 0.35);
-            color: #a7e9ff;
+            border: 1px solid rgba(131, 209, 255, 0.28);
+            background: rgba(7, 16, 33, 0.45);
+            backdrop-filter: blur(14px);
+            color: #b9f1ff;
             font-size: 12px;
             font-weight: 700;
             letter-spacing: 1px;
+            white-space: nowrap;
         }
 
-        .hero {
-            max-width: 560px;
+        .center {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px 0;
+        }
+
+        .panel {
+            width: 100%;
+            max-width: 420px;
+            border-radius: 28px;
+            padding: 22px;
+            border: 1px solid rgba(123, 212, 255, 0.3);
+            background:
+                    linear-gradient(180deg, rgba(11, 23, 45, 0.85), rgba(5, 11, 24, 0.88));
+            box-shadow:
+                    0 20px 60px rgba(0, 0, 0, 0.45),
+                    0 0 40px rgba(50, 162, 255, 0.14),
+                    inset 0 0 30px rgba(100, 196, 255, 0.06);
+            backdrop-filter: blur(18px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                    linear-gradient(135deg, rgba(255,255,255,0.08), transparent 35%, transparent 65%, rgba(81,194,255,0.08));
             pointer-events: none;
-            margin-bottom: 60px;
         }
 
-        .hero h1 {
-            margin: 0 0 12px;
+        .panel-badge {
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(38, 159, 255, 0.14);
+            color: #8ee6ff;
+            border: 1px solid rgba(116, 210, 255, 0.25);
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .panel h1 {
+            margin: 0 0 10px;
             font-size: 34px;
             line-height: 1.05;
-            text-shadow: 0 0 30px rgba(86, 179, 255, 0.25);
         }
 
-        .hero p {
-            margin: 0 0 18px;
-            color: #c8e9ff;
-            font-size: 16px;
-            line-height: 1.5;
-            max-width: 480px;
+        .panel p {
+            margin: 0;
+            color: #cfeeff;
+            line-height: 1.55;
+            font-size: 15px;
         }
 
-        .chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .chip {
-            padding: 10px 14px;
-            border-radius: 999px;
-            border: 1px solid rgba(115, 215, 255, 0.3);
-            background: rgba(8, 16, 32, 0.55);
-            color: #d6f4ff;
-            font-size: 13px;
-            box-shadow: 0 0 20px rgba(64, 177, 255, 0.08);
-        }
-
-        model-viewer {
-            width: 100vw;
-            height: 100vh;
-            --poster-color: transparent;
-            background: transparent;
-        }
-
-        .bottom-bar {
-            position: absolute;
-            left: 20px;
-            right: 20px;
-            bottom: 22px;
-            z-index: 11;
-            display: flex;
+        .features {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 12px;
-            align-items: center;
+        }
+
+        .feature {
+            border-radius: 18px;
+            padding: 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(122, 208, 255, 0.14);
+        }
+
+        .feature strong {
+            display: block;
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .feature span {
+            display: block;
+            font-size: 13px;
+            color: #bcdcf2;
+            line-height: 1.45;
+        }
+
+        .footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
-        .link-btn {
-            pointer-events: auto;
+        .btn {
+            flex: 1;
+            min-width: 140px;
             text-decoration: none;
-            color: white;
-            padding: 14px 18px;
-            border-radius: 14px;
+            text-align: center;
+            padding: 15px 16px;
+            border-radius: 16px;
             font-weight: 700;
-            letter-spacing: 0.2px;
-            border: 1px solid rgba(95, 194, 255, 0.35);
-            background: linear-gradient(180deg, rgba(23,42,75,0.9), rgba(8,16,30,0.95));
-            box-shadow: 0 12px 35px rgba(0,0,0,0.28), 0 0 22px rgba(68, 175, 255, 0.12);
+            font-size: 15px;
+            color: white;
+            border: 1px solid rgba(131, 209, 255, 0.24);
+            background: linear-gradient(135deg, #1f87ff, #705cff);
+            box-shadow: 0 12px 28px rgba(48, 114, 255, 0.24);
         }
 
-        .link-btn.secondary {
-            background: rgba(6, 12, 26, 0.82);
-            color: #bfefff;
+        .btn.secondary {
+            background: rgba(10, 18, 34, 0.75);
+            color: #c9f1ff;
+            box-shadow: none;
         }
 
-        .note {
-            pointer-events: none;
-            color: rgba(214, 244, 255, 0.85);
+        .hint {
             font-size: 12px;
-            margin-left: auto;
-            text-align: right;
-            max-width: 280px;
+            color: rgba(210, 237, 255, 0.8);
+            line-height: 1.5;
         }
 
-        @media (max-width: 700px) {
-            .hero h1 { font-size: 28px; }
-            .hero p { font-size: 14px; }
-            .brand strong { font-size: 20px; }
-            .bottom-bar {
-                left: 14px;
-                right: 14px;
-                bottom: 14px;
+        @media (max-width: 480px) {
+            .brand .title {
+                font-size: 24px;
             }
-            .note {
-                max-width: 100%;
-                width: 100%;
-                margin-left: 0;
-                text-align: left;
+
+            .panel h1 {
+                font-size: 28px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
+<div class="bg-grid"></div>
+<div class="glow one"></div>
+<div class="glow two"></div>
+<div class="glow three"></div>
 
-<div class="overlay">
-    <div class="top">
+<div class="app">
+    <div class="topbar">
         <div class="brand">
-            <small>FUTURE LEARNING PLATFORM</small>
-            <strong>BAU Academy</strong>
+            <div class="mini">FUTURE LEARNING PLATFORM</div>
+            <div class="title">BAU Academy</div>
         </div>
-        <div class="badge">AR EXPERIENCE</div>
+        <div class="status">LIVE DEMO</div>
     </div>
 
-    <div class="hero">
-        <h1>Образование, которое выглядит как будущее</h1>
-        <p>
-            Интерактивные курсы, современный подход к обучению, визуальная подача и цифровой опыт,
-            который можно показать инвесторам, студентам и партнёрам.
-        </p>
-        <div class="chips">
-            <div class="chip">Courses</div>
-            <div class="chip">Certificates</div>
-            <div class="chip">Telegram Integration</div>
-            <div class="chip">Premium Experience</div>
+    <div class="center">
+        <div class="panel">
+            <div class="panel-badge">EDUCATION • AI • DIGITAL EXPERIENCE</div>
+            <h1>Обучение, которое выглядит как будущее</h1>
+            <p>
+                Современная платформа для курсов, уроков, сертификатов и интерактивного обучения.
+                Красивый digital-опыт для студентов, партнёров и инвесторов.
+            </p>
+
+            <div class="features">
+                <div class="feature">
+                    <strong>Курсы</strong>
+                    <span>Видео, уроки, модули и удобная подача контента.</span>
+                </div>
+                <div class="feature">
+                    <strong>Сертификаты</strong>
+                    <span>Автоматическая выдача после прохождения обучения.</span>
+                </div>
+                <div class="feature">
+                    <strong>Telegram</strong>
+                    <span>Интеграция с ботом, уведомлениями и быстрым доступом.</span>
+                </div>
+                <div class="feature">
+                    <strong>Premium UI</strong>
+                    <span>Футуристичный дизайн и вау-эффект на телефоне.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="buttons">
+            <a class="btn" href="https://t.me/" target="_blank">Telegram</a>
+            <a class="btn secondary" href="#">Courses</a>
+        </div>
+        <div class="hint">
+            Сейчас это красивый экран-презентация BAU Academy. Если хочешь, следующим сообщением я дам тебе уже
+            версию с AR-кнопкой и эффектом “панели в воздухе”.
         </div>
     </div>
 </div>
-
-<model-viewer
-        src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
-        ios-src="https://modelviewer.dev/shared-assets/models/Astronaut.usdz"
-        ar
-        ar-modes="scene-viewer quick-look webxr"
-        camera-controls
-        auto-rotate
-        shadow-intensity="1.2"
-        exposure="1.05"
-        alt="BAU Academy AR Model">
-    <button slot="ar-button" style="
-      position:absolute;
-      right:16px;
-      bottom:16px;
-      padding:14px 18px;
-      border:none;
-      border-radius:14px;
-      font-weight:700;
-      color:#fff;
-      background:linear-gradient(135deg,#1c8cff,#6a5cff);
-      box-shadow:0 12px 30px rgba(28,140,255,0.35);
-      cursor:pointer;
-    ">
-        Открыть в AR
-    </button>
-</model-viewer>
-
-<div class="bottom-bar">
-    <a class="link-btn" href="https://t.me/" target="_blank" rel="noopener noreferrer">Telegram</a>
-    <a class="link-btn secondary" href="#" onclick="alert('Здесь можно поставить ссылку на курсы BAU Academy'); return false;">Courses</a>
-    <div class="note">
-        Нажми «Открыть в AR», чтобы поставить объект в комнате через камеру телефона.
-    </div>
-</div>
-
 </body>
 </html>
