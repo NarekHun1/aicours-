@@ -1,11 +1,36 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="hy">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>BAU Academy AR</title>
-    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>BAU Academy | Ապագայի կրթական հարթակ</title>
+    <meta
+            name="description"
+            content="BAU Academy՝ AI, AR և ուսուցիչների marketplace-ով ապագայի կրթական հարթակ"
+    />
     <style>
+        :root {
+            --bg-1: #030814;
+            --bg-2: #07152c;
+            --bg-3: #0b2346;
+            --line: rgba(110, 200, 255, 0.12);
+            --line-strong: rgba(120, 215, 255, 0.28);
+            --text: #f3f8ff;
+            --muted: #b9cde6;
+            --muted-2: #92abc9;
+            --cyan: #77e7ff;
+            --blue: #5aa8ff;
+            --violet: #8165ff;
+            --card: rgba(10, 20, 40, 0.72);
+            --card-2: rgba(7, 16, 32, 0.88);
+            --success: #8fffd8;
+            --warning: #ffe39a;
+            --shadow: 0 20px 70px rgba(0, 0, 0, 0.45);
+        }
+
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
@@ -13,223 +38,394 @@
 
         html, body {
             margin: 0;
-            width: 100%;
             min-height: 100%;
-            font-family: Arial, sans-serif;
+            font-family: Inter, Arial, sans-serif;
+            color: var(--text);
             background:
-                    radial-gradient(circle at top, #16356d 0%, #091224 35%, #04070f 70%, #010205 100%);
-            color: white;
+                    radial-gradient(circle at top left, rgba(60, 140, 255, 0.25), transparent 22%),
+                    radial-gradient(circle at top right, rgba(128, 94, 255, 0.18), transparent 24%),
+                    radial-gradient(circle at bottom center, rgba(0, 222, 255, 0.12), transparent 28%),
+                    linear-gradient(180deg, var(--bg-3) 0%, var(--bg-2) 34%, var(--bg-1) 100%);
             overflow-x: hidden;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
         }
 
-        body {
-            position: relative;
-        }
-
-        .bg-grid {
-            position: absolute;
+        body::before {
+            content: "";
+            position: fixed;
             inset: 0;
-            background:
-                    linear-gradient(rgba(91, 179, 255, 0.08) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(91, 179, 255, 0.08) 1px, transparent 1px);
-            background-size: 30px 30px;
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0.25));
-            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0.25));
             pointer-events: none;
+            background:
+                    linear-gradient(var(--line) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+            background-size: 36px 36px;
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.95), rgba(0,0,0,0.35));
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.95), rgba(0,0,0,0.35));
+            z-index: 0;
         }
 
         .glow {
-            position: absolute;
+            position: fixed;
             border-radius: 50%;
-            filter: blur(60px);
-            opacity: 0.55;
+            filter: blur(80px);
             pointer-events: none;
+            z-index: 0;
+            opacity: 0.45;
         }
 
-        .glow.one {
+        .glow.g1 {
+            width: 300px;
+            height: 300px;
+            top: 4%;
+            left: -80px;
+            background: rgba(52, 162, 255, 0.45);
+        }
+
+        .glow.g2 {
             width: 260px;
             height: 260px;
-            background: #1fa2ff;
-            top: 6%;
-            left: -60px;
+            top: 22%;
+            right: -70px;
+            background: rgba(120, 90, 255, 0.35);
         }
 
-        .glow.two {
-            width: 220px;
-            height: 220px;
-            background: #7b5cff;
-            right: -40px;
-            top: 20%;
-        }
-
-        .glow.three {
-            width: 240px;
-            height: 240px;
-            background: #00d9ff;
-            bottom: -60px;
+        .glow.g3 {
+            width: 260px;
+            height: 260px;
+            bottom: 8%;
             left: 50%;
             transform: translateX(-50%);
+            background: rgba(40, 214, 255, 0.22);
         }
 
         .app {
             position: relative;
-            z-index: 2;
+            z-index: 1;
             width: 100%;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            padding: 18px;
-            padding-bottom: 120px;
+            max-width: 1220px;
+            margin: 0 auto;
+            padding: 22px 16px 120px;
         }
+
         .topbar {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            gap: 12px;
-            position: relative;
-            z-index: 5;
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .brand,
+        .status-chip,
+        .mini-card,
+        .card,
+        .feature-card,
+        .plan-card,
+        .market-card,
+        .timeline-card,
+        .sticky-actions {
+            border: 1px solid var(--line-strong);
+            background: linear-gradient(180deg, rgba(15, 29, 57, 0.84), rgba(7, 15, 30, 0.88));
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
 
         .brand {
-            padding: 12px 14px;
-            border: 1px solid rgba(131, 209, 255, 0.35);
-            background: rgba(7, 16, 33, 0.45);
-            backdrop-filter: blur(14px);
-            border-radius: 18px;
-            box-shadow: 0 0 30px rgba(41, 157, 253, 0.15);
+            padding: 18px 20px;
+            border-radius: 24px;
+            min-width: 0;
+            flex: 1;
         }
 
         .brand .mini {
-            font-size: 11px;
-            letter-spacing: 2px;
-            color: #8fe5ff;
-            margin-bottom: 6px;
+            color: var(--cyan);
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
         }
 
         .brand .title {
-            font-size: 28px;
-            font-weight: 800;
+            font-size: 44px;
             line-height: 1;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 10px;
         }
 
-        .status {
-            padding: 10px 14px;
+        .brand .subtitle {
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.55;
+            max-width: 760px;
+        }
+
+        .status-chip {
             border-radius: 999px;
-            border: 1px solid rgba(131, 209, 255, 0.28);
-            background: rgba(7, 16, 33, 0.45);
-            backdrop-filter: blur(14px);
-            color: #b9f1ff;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 1px;
+            padding: 14px 18px;
+            color: var(--cyan);
             white-space: nowrap;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
         }
 
-        .center {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 18px 0;
-            position: relative;
-            z-index: 3;
+        .hero {
+            display: grid;
+            grid-template-columns: 1.18fr 0.82fr;
+            gap: 18px;
+            margin-bottom: 18px;
         }
 
-        .panel {
-            width: 100%;
-            max-width: 420px;
-            border-radius: 28px;
-            padding: 22px;
-            border: 1px solid rgba(123, 212, 255, 0.3);
-            background:
-                    linear-gradient(180deg, rgba(11, 23, 45, 0.85), rgba(5, 11, 24, 0.88));
-            box-shadow:
-                    0 20px 60px rgba(0, 0, 0, 0.45),
-                    0 0 40px rgba(50, 162, 255, 0.14),
-                    inset 0 0 30px rgba(100, 196, 255, 0.06);
-            backdrop-filter: blur(18px);
+        .card {
+            border-radius: 30px;
+            padding: 24px;
             position: relative;
             overflow: hidden;
         }
 
-        .panel::before {
+        .hero .card::before,
+        .feature-card::before,
+        .plan-card::before,
+        .market-card::before {
             content: "";
             position: absolute;
             inset: 0;
-            background:
-                    linear-gradient(135deg, rgba(255,255,255,0.08), transparent 35%, transparent 65%, rgba(81,194,255,0.08));
             pointer-events: none;
+            background:
+                    linear-gradient(135deg, rgba(255,255,255,0.07), transparent 30%, transparent 70%, rgba(94, 186, 255, 0.06));
         }
 
-        .panel-badge {
-            display: inline-block;
-            padding: 8px 12px;
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 14px;
             border-radius: 999px;
-            background: rgba(38, 159, 255, 0.14);
-            color: #8ee6ff;
-            border: 1px solid rgba(116, 210, 255, 0.25);
+            border: 1px solid rgba(130, 214, 255, 0.28);
+            background: rgba(40, 134, 255, 0.1);
+            color: #a9edff;
             font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        h1, h2, h3, p {
+            margin: 0;
+        }
+
+        .hero-title {
+            font-size: 58px;
+            line-height: 0.97;
+            letter-spacing: -1.8px;
+            margin-bottom: 16px;
+            max-width: 760px;
+        }
+
+        .hero-text {
+            color: var(--muted);
+            font-size: 18px;
+            line-height: 1.65;
+            max-width: 720px;
+        }
+
+        .hero-points {
+            margin-top: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .pill {
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(130, 214, 255, 0.18);
+            color: #d9f2ff;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            height: 100%;
+        }
+
+        .mini-card {
+            border-radius: 24px;
+            padding: 18px;
+            min-height: 132px;
+        }
+
+        .mini-card .k {
+            font-size: 14px;
+            color: var(--cyan);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             font-weight: 700;
+        }
+
+        .mini-card .v {
+            font-size: 26px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 8px;
+        }
+
+        .mini-card .t {
+            color: var(--muted-2);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .section {
+            margin-top: 18px;
+        }
+
+        .section-head {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 12px;
             margin-bottom: 14px;
         }
 
-        .panel h1 {
-            margin: 0 0 10px;
-            font-size: 34px;
-            line-height: 1.05;
+        .section-title {
+            font-size: 32px;
+            letter-spacing: -0.8px;
         }
 
-        .panel p {
-            margin: 0;
-            color: #cfeeff;
-            line-height: 1.55;
+        .section-text {
+            color: var(--muted);
             font-size: 15px;
+            line-height: 1.55;
+            max-width: 680px;
         }
 
         .features {
-            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+
+        .feature-card,
+        .plan-card,
+        .market-card,
+        .timeline-card {
+            border-radius: 26px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 14px;
+            font-size: 24px;
+            background: linear-gradient(135deg, rgba(86,168,255,0.18), rgba(123,95,255,0.18));
+            border: 1px solid rgba(130, 214, 255, 0.18);
+        }
+
+        .feature-card h3,
+        .plan-card h3,
+        .market-card h3,
+        .timeline-card h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            letter-spacing: -0.4px;
+        }
+
+        .feature-card p,
+        .plan-card p,
+        .market-card p,
+        .timeline-card p {
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.65;
+        }
+
+        .big-split {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 14px;
+            margin-top: 14px;
         }
 
-        .feature {
-            border-radius: 18px;
-            padding: 14px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(122, 208, 255, 0.14);
+        .plans {
+            display: grid;
+            gap: 14px;
         }
 
-        .feature strong {
-            display: block;
+        .plan-card ul,
+        .market-card ul {
+            padding-left: 18px;
+            margin: 14px 0 0;
+            color: var(--muted);
+            line-height: 1.7;
             font-size: 15px;
-            margin-bottom: 6px;
         }
 
-        .feature span {
-            display: block;
-            font-size: 13px;
-            color: #bcdcf2;
-            line-height: 1.45;
+        .accent-line {
+            width: 70px;
+            height: 4px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--cyan), var(--violet));
+            margin: 0 0 16px;
         }
 
-        .footer {
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-top: 14px;
+        }
+
+        .timeline {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-top: 14px;
+        }
+
+        .phase {
+            display: inline-flex;
+            margin-bottom: 12px;
+            padding: 7px 11px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--success);
+            border: 1px solid rgba(143, 255, 216, 0.22);
+            background: rgba(143, 255, 216, 0.08);
+        }
+
+        .sticky-actions {
             position: sticky;
             bottom: 0;
-            z-index: 20;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 24px;
-            padding-top: 12px;
-            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
-            background: linear-gradient(to top, rgba(3, 7, 15, 0.96), rgba(3, 7, 15, 0.7), transparent);
-            backdrop-filter: blur(10px);
+            z-index: 10;
+            margin-top: 20px;
+            padding: 14px;
+            border-radius: 22px;
+            background:
+                    linear-gradient(180deg, rgba(10,18,34,0.82), rgba(6,12,24,0.95));
         }
 
-        .buttons {
+        .actions-row {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
@@ -237,146 +433,443 @@
 
         .btn {
             flex: 1;
-            min-width: 140px;
+            min-width: 150px;
+            padding: 15px 18px;
+            border-radius: 16px;
             text-decoration: none;
             text-align: center;
-            padding: 15px 16px;
-            border-radius: 16px;
-            font-weight: 700;
+            font-weight: 800;
             font-size: 15px;
+            border: 1px solid rgba(132, 213, 255, 0.22);
             color: white;
-            border: 1px solid rgba(131, 209, 255, 0.24);
-            background: linear-gradient(135deg, #1f87ff, #705cff);
-            box-shadow: 0 12px 28px rgba(48, 114, 255, 0.24);
+            background: linear-gradient(135deg, #2e8cff, #7762ff);
+            box-shadow: 0 14px 34px rgba(63, 118, 255, 0.28);
         }
 
         .btn.secondary {
-            background: rgba(10, 18, 34, 0.75);
-            color: #c9f1ff;
+            background: rgba(255,255,255,0.04);
+            color: #ccecff;
             box-shadow: none;
         }
 
-        .hint {
+        .footer-note {
+            margin-top: 10px;
+            color: var(--muted-2);
             font-size: 12px;
-            color: rgba(210, 237, 255, 0.8);
-            line-height: 1.5;
+            line-height: 1.55;
+            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 4px);
         }
 
-        model-viewer {
-            position: fixed;
-            inset: 0;
-            width: 100vw;
-            height: 100vh;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        #custom-ar-button {
-            border: none;
-            cursor: pointer;
-        }
-
-        @media (max-width: 480px) {
-            .brand .title {
-                font-size: 24px;
-            }
-
-            .panel h1 {
-                font-size: 28px;
+        @media (max-width: 1100px) {
+            .hero,
+            .big-split,
+            .timeline {
+                grid-template-columns: 1fr;
             }
 
             .features {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .market-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .brand .title {
+                font-size: 40px;
+            }
+
+            .hero-title {
+                font-size: 48px;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .app {
+                padding: 14px 12px 120px;
+            }
+
+            .topbar {
+                flex-direction: column;
+            }
+
+            .brand .title {
+                font-size: 34px;
+            }
+
+            .hero-title {
+                font-size: 38px;
+            }
+
+            .hero-text {
+                font-size: 16px;
+            }
+
+            .features,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 27px;
+            }
+
+            .actions-row {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
-<div class="bg-grid"></div>
-<div class="glow one"></div>
-<div class="glow two"></div>
-<div class="glow three"></div>
+<div class="glow g1"></div>
+<div class="glow g2"></div>
+<div class="glow g3"></div>
 
 <div class="app">
     <div class="topbar">
         <div class="brand">
             <div class="mini">FUTURE LEARNING PLATFORM</div>
             <div class="title">BAU Academy</div>
+            <div class="subtitle">
+                Ապագայի կրթական հարթակ, որը միավորում է արհեստական բանականությունը,
+                լրացված իրականությունը, ուսուցիչների marketplace-ը և թվային եկամտի նոր մոդել։
+            </div>
         </div>
-        <div class="status">AR DEMO</div>
+        <div class="status-chip">INVESTMENT DEMO</div>
     </div>
 
-    <div class="center">
-        <div class="panel">
-            <div class="panel-badge">EDUCATION • AI • DIGITAL EXPERIENCE</div>
-            <h1>Обучение, которое выглядит как будущее</h1>
-            <p>
-                Современная платформа для курсов, уроков, сертификатов и интерактивного обучения.
-                Красивый digital-опыт для студентов, партнёров и инвесторов.
+    <section class="hero">
+        <div class="card">
+            <div class="eyebrow">AI • AR • Marketplace • Monetization</div>
+            <h1 class="hero-title">
+                Կրթություն, որը դուրս է գալիս էկրանից և դառնում է իրական փորձ
+            </h1>
+            <p class="hero-text">
+                BAU Academy-ն պարզապես օնլայն դասերի հարթակ չէ։ Սա նոր կրթական էկոհամակարգ է,
+                որտեղ ուսանողները սովորում են AI-ով ուժեղացված միջավայրում, տեսնում են AR կրթական
+                շերտեր, ստանում են անհատական ուղեկցում, իսկ ուսուցիչները կառուցում են իրենց եկամուտը
+                սեփական դասերով, մենթորությամբ և marketplace-ով։
             </p>
+            <div class="hero-points">
+                <div class="pill">Անհատական AI ուսուցիչ</div>
+                <div class="pill">AR դասեր և ինտերակտիվ տեսարաններ</div>
+                <div class="pill">Ուսուցիչների եկամտային marketplace</div>
+                <div class="pill">Telegram և mobile first փորձ</div>
+                <div class="pill">Սերտիֆիկատներ և progress tracking</div>
+            </div>
+        </div>
 
-            <div class="features">
-                <div class="feature">
-                    <strong>Курсы</strong>
-                    <span>Видео, уроки, модули и удобная подача контента.</span>
+        <div class="stats-grid">
+            <div class="mini-card">
+                <div class="k">AI Learning Layer</div>
+                <div class="v">24/7 խելացի ուղեկցում</div>
+                <div class="t">AI-ը բացատրում է, ստուգում է, հուշում է և առաջարկում է հաջորդ քայլը։</div>
+            </div>
+            <div class="mini-card">
+                <div class="k">AR Experience</div>
+                <div class="v">Դասը «օդում»</div>
+                <div class="t">Տեսանելի կրթական panel-ներ, վիզուալ օբյեկտներ և ցուցադրական փորձ։</div>
+            </div>
+            <div class="mini-card">
+                <div class="k">Teacher Marketplace</div>
+                <div class="v">Նոր եկամտի շուկա</div>
+                <div class="t">Ուսուցիչները վաճառում են դասեր, փաթեթներ, mentoring և live sessions։</div>
+            </div>
+            <div class="mini-card">
+                <div class="k">Scalable Model</div>
+                <div class="v">B2C + B2B + White Label</div>
+                <div class="t">Անհատ ուսանողներ, կազմակերպություններ, համալսարաններ և գործընկերներ։</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-head">
+            <div>
+                <h2 class="section-title">Ինչ է լինելու հարթակի ներսում</h2>
+                <p class="section-text">
+                    Մեր նպատակն է ստեղծել այնպիսի կրթական միջավայր, որտեղ տեխնոլոգիան ոչ թե լրացում է,
+                    այլ ամբողջ փորձի հիմքը։
+                </p>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>AI ուսումնական օգնական</h3>
+                <p>
+                    Յուրաքանչյուր ուսանող կունենա անձնական AI ուղեկից, որը կբացատրի թեմաները,
+                    կվերլուծի սխալները, կտա անհատական առաջադրանքներ և կառաջարկի ճիշտ ուսումնական ուղի։
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🧠</div>
+                <h3>Adaptive learning</h3>
+                <p>
+                    Համակարգը կհասկանա ուսանողի տեմպը, հետաքրքրությունները և գիտելիքի բացերը՝
+                    ձևավորելով հատուկ ուսումնական սցենար հենց այդ մարդու համար։
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">✨</div>
+                <h3>AR կրթական փորձ</h3>
+                <p>
+                    Դասերը կարող են ցուցադրվել որպես AR panel-ներ, մոդելներ և վիզուալ բացատրություններ,
+                    որոնք ուսուցումը դարձնում են հիշվող, ժամանակակից և ցուցադրելի։
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎓</div>
+                <h3>Սերտիֆիկատներ և կարիերայի ուղի</h3>
+                <p>
+                    Ավարտից հետո՝ թվային սերտիֆիկատներ, portfolio-ի ինտեգրում և հաջորդ քայլերի
+                    խելացի առաջարկներ՝ մասնագիտական աճի համար։
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Telegram + mobile first</h3>
+                <p>
+                    Արագ մուտք, ծանուցումներ, թեստեր, mini դասեր և վերանայումներ՝ անմիջապես հեռախոսից,
+                    առանց բարդության։
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Analytics վահանակ</h3>
+                <p>
+                    Ուսանողների ներգրավվածություն, արդյունքներ, completion rate, AI feedback և
+                    ուսուցիչների եկամտի ամբողջական պատկեր մի վահանակում։
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-head">
+            <div>
+                <h2 class="section-title">AI ինտեգրման ուժեղ պլանը</h2>
+                <p class="section-text">
+                    Սա սովորական chatbot չէ։ AI-ն դառնալու է կրթական համակարգի կենտրոնական շերտը։
+                </p>
+            </div>
+        </div>
+
+        <div class="big-split">
+            <div class="plans">
+                <div class="plan-card">
+                    <div class="accent-line"></div>
+                    <h3>1. AI որպես անձնական մենթոր</h3>
+                    <p>
+                        Ուսանողը ցանկացած թեմայից հետո կարող է հարցեր տալ, ստանալ պարզ բացատրություն,
+                        օրինակներ, վարժություններ և անհատական ամփոփում։
+                    </p>
+                    <ul>
+                        <li>Թեմաների բացատրություն պարզ լեզվով</li>
+                        <li>Սխալների անմիջական վերլուծություն</li>
+                        <li>Հարմարեցված տնային առաջադրանքներ</li>
+                        <li>Անձնական learning roadmap</li>
+                    </ul>
                 </div>
-                <div class="feature">
-                    <strong>Сертификаты</strong>
-                    <span>Автоматическая выдача после прохождения обучения.</span>
+
+                <div class="plan-card">
+                    <div class="accent-line"></div>
+                    <h3>2. AI որպես բովանդակության շարժիչ</h3>
+                    <p>
+                        Ուսուցիչների համար AI-ը կօգնի ստեղծել դասի outline, quiz, summary, homework,
+                        visual ideas և localization տարբեր լեզուներով։
+                    </p>
+                    <ul>
+                        <li>Դասի կառուցվածքի գեներացում</li>
+                        <li>Թեստերի և հարցաշարերի ստեղծում</li>
+                        <li>Տեքստերի թարգմանություն և ադապտացիա</li>
+                        <li>Ավելի արագ course production</li>
+                    </ul>
                 </div>
-                <div class="feature">
-                    <strong>Telegram</strong>
-                    <span>Интеграция с ботом, уведомлениями и быстрым доступом.</span>
+            </div>
+
+            <div class="plans">
+                <div class="plan-card">
+                    <div class="accent-line"></div>
+                    <h3>3. AI որպես արդյունքների վերլուծող</h3>
+                    <p>
+                        Հարթակը կհասկանա՝ ով է կորցնում մոտիվացիան, ով ինչ բաց ունի, և որ ուսուցիչների
+                        կոնտենտն է տալիս լավագույն արդյունքը։
+                    </p>
+                    <ul>
+                        <li>Retention և completion կանխատեսում</li>
+                        <li>Risk students-ի վաղ հայտնաբերում</li>
+                        <li>Ուսուցիչների արդյունավետության վերլուծություն</li>
+                        <li>Smart recommendations հաջորդ կուրսերի համար</li>
+                    </ul>
                 </div>
-                <div class="feature">
-                    <strong>Premium UI</strong>
-                    <span>Футуристичный дизайн и вау-эффект на телефоне.</span>
+
+                <div class="plan-card">
+                    <div class="accent-line"></div>
+                    <h3>4. AI Avatar / Future mode</h3>
+                    <p>
+                        Հետագա փուլում հնարավոր է AI avatar-ների միջոցով ուսուցում՝ ձայնային ուղեկցությամբ,
+                        ներկայացումներով և semi-live interaction-ով։
+                    </p>
+                    <ul>
+                        <li>Ձայնային բացատրություններ</li>
+                        <li>Արձագանքող AI presenter</li>
+                        <li>AR/AI combined demo mode</li>
+                        <li>Investor wow-effect</li>
+                    </ul>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div class="footer">
-        <div class="buttons">
-            <a class="btn" href="https://t.me/" target="_blank" rel="noopener noreferrer">Telegram</a>
-            <a class="btn secondary" href="#">Courses</a>
-            <button class="btn" id="custom-ar-button" type="button">Открыть в AR</button>
+    <section class="section">
+        <div class="section-head">
+            <div>
+                <h2 class="section-title">Marketplace ուսուցիչների համար</h2>
+                <p class="section-text">
+                    BAU Academy-ն պետք է դառնա հարթակ, որտեղ ոչ միայն սովորում են, այլև վաստակում։
+                </p>
+            </div>
         </div>
-        <div class="hint">
-            Сейчас AR откроет 3D-объект. Дальше мы заменим его на свою BAU-панель.
+
+        <div class="market-grid">
+            <div class="market-card">
+                <div class="accent-line"></div>
+                <h3>Ուսուցիչների եկամտի նոր մոդել</h3>
+                <p>
+                    Յուրաքանչյուր ուսուցիչ կարող է ստեղծել սեփական միկրո-բիզնեսը հարթակի ներսում՝
+                    առանց տեխնիկական բարդությունների։
+                </p>
+                <ul>
+                    <li>Վաճառել prerecorded դասեր</li>
+                    <li>Անցկացնել live sessions</li>
+                    <li>Ստեղծել paid mentorship փաթեթներ</li>
+                    <li>Վաճառել premium նյութեր և quiz pack-եր</li>
+                    <li>Ստանալ rating, reviews և trust score</li>
+                </ul>
+            </div>
+
+            <div class="market-card">
+                <div class="accent-line"></div>
+                <h3>BAU Academy-ի եկամտի աղբյուրներ</h3>
+                <p>
+                    Բազմաշերտ մոնետիզացիան հարթակին տալիս է մասշտաբավորման և կայուն եկամտի հնարավորություն։
+                </p>
+                <ul>
+                    <li>Գործարքների commission ուսուցիչներից</li>
+                    <li>Monthly subscription ուսանողների համար</li>
+                    <li>Featured teacher / featured course վճարովի դիրքեր</li>
+                    <li>B2B փաթեթներ կազմակերպությունների համար</li>
+                    <li>White-label լուծում համալսարանների համար</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-head">
+            <div>
+                <h2 class="section-title">Ինչու սա կարող է դառնալ ներդրումային ուժեղ պատմություն</h2>
+                <p class="section-text">
+                    Մեր առավելությունը ոչ թե մեկ ֆունկցիան է, այլ ամբողջ համադրությունը։
+                </p>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>Տարբերակում շուկայում</h3>
+                <p>
+                    Շատերը ունեն LMS, ոմանք ունեն AI, քիչերն ունեն marketplace, իսկ AI + AR + teacher economy
+                    համադրությունը գրեթե չի ներկայացվում որպես ամբողջական պրոդուկտ։
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">💸</div>
+                <h3>Բազմակի աճի ուղիներ</h3>
+                <p>
+                    Միաժամանակ աշխատում են B2C, creator economy, subscription, B2B և enterprise մոդելները։
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🌍</div>
+                <h3>Մասշտաբում սահմաններից դուրս</h3>
+                <p>
+                    Հարթակը կարող է սկսել տեղային շուկայից, բայց արագ դառնալ տարածաշրջանային և միջազգային։
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-head">
+            <div>
+                <h2 class="section-title">Զարգացման փուլեր</h2>
+                <p class="section-text">
+                    Ներդրողի համար կարևոր է տեսնել ոչ միայն գաղափարը, այլ նաև իրականացման հերթականությունը։
+                </p>
+            </div>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-card">
+                <div class="phase">Phase 1</div>
+                <h3>MVP</h3>
+                <p>
+                    Կուրսեր, ուսանողի հոսք, Telegram ինտեգրում, quiz, certificate, ուսուցիչների հիմնական cabinet։
+                </p>
+            </div>
+
+            <div class="timeline-card">
+                <div class="phase">Phase 2</div>
+                <h3>AI layer</h3>
+                <p>
+                    Անձնական AI օգնական, smart feedback, adaptive learning, content tools ուսուցիչների համար։
+                </p>
+            </div>
+
+            <div class="timeline-card">
+                <div class="phase">Phase 3</div>
+                <h3>Marketplace</h3>
+                <p>
+                    Ուսուցիչների վաճառքի էջեր, mentoring packages, payouts, reviews, creator ranking։
+                </p>
+            </div>
+
+            <div class="timeline-card">
+                <div class="phase">Phase 4</div>
+                <h3>AR / Demo Mode</h3>
+                <p>
+                    Futuristic learning panels, investor demos, immersive education showcase և premium փորձ։
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <div class="sticky-actions">
+        <div class="actions-row">
+            <a class="btn" href="#top">Ներկայացման սկիզբ</a>
+            <a class="btn secondary" href="#">AI Demo</a>
+            <a class="btn secondary" href="#">Teacher Marketplace</a>
+        </div>
+        <div class="footer-note">
+            BAU Academy-ը ներկայացվում է որպես ապագայի կրթական էկոհամակարգ՝ AI, AR և ուսուցիչների
+            marketplace համադրությամբ, որտեղ տեխնոլոգիան ստեղծում է ոչ միայն ուսուցում, այլ նաև եկամտի նոր շուկա։
         </div>
     </div>
 </div>
-
-<model-viewer
-        id="arModel"
-        src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
-        ios-src="https://modelviewer.dev/shared-assets/models/Astronaut.usdz"
-        ar
-        ar-modes="scene-viewer quick-look webxr"
-        camera-controls
-        auto-rotate
-        shadow-intensity="1"
-        exposure="1.05"
-        alt="BAU Academy AR">
-</model-viewer>
-
-<script>
-    const arButton = document.getElementById('custom-ar-button');
-    const modelViewer = document.getElementById('arModel');
-
-    arButton.addEventListener('click', async () => {
-        try {
-            if (modelViewer.activateAR) {
-                await modelViewer.activateAR();
-            } else {
-                alert('AR не поддерживается на этом устройстве.');
-            }
-        } catch (e) {
-            console.error(e);
-            alert('Не удалось открыть AR. Попробуй открыть страницу на iPhone Safari или Android Chrome.');
-        }
-    });
-</script>
 </body>
 </html>
