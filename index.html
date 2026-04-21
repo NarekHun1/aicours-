@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>BAU Academy Future Screen</title>
+    <title>BAU Academy AR</title>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -40,7 +41,7 @@
         .glow {
             position: absolute;
             border-radius: 50%;
-            filter: blur(50px);
+            filter: blur(60px);
             opacity: 0.55;
             pointer-events: none;
         }
@@ -86,6 +87,8 @@
             justify-content: space-between;
             align-items: flex-start;
             gap: 12px;
+            position: relative;
+            z-index: 5;
         }
 
         .brand {
@@ -129,6 +132,8 @@
             align-items: center;
             justify-content: center;
             padding: 18px 0;
+            position: relative;
+            z-index: 3;
         }
 
         .panel {
@@ -213,6 +218,8 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
+            position: relative;
+            z-index: 5;
         }
 
         .buttons {
@@ -248,6 +255,20 @@
             line-height: 1.5;
         }
 
+        model-viewer {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #custom-ar-button {
+            border: none;
+            cursor: pointer;
+        }
+
         @media (max-width: 480px) {
             .brand .title {
                 font-size: 24px;
@@ -275,7 +296,7 @@
             <div class="mini">FUTURE LEARNING PLATFORM</div>
             <div class="title">BAU Academy</div>
         </div>
-        <div class="status">LIVE DEMO</div>
+        <div class="status">AR DEMO</div>
     </div>
 
     <div class="center">
@@ -310,14 +331,45 @@
 
     <div class="footer">
         <div class="buttons">
-            <a class="btn" href="https://t.me/" target="_blank">Telegram</a>
+            <a class="btn" href="https://t.me/" target="_blank" rel="noopener noreferrer">Telegram</a>
             <a class="btn secondary" href="#">Courses</a>
+            <button class="btn" id="custom-ar-button" type="button">Открыть в AR</button>
         </div>
         <div class="hint">
-            Сейчас это красивый экран-презентация BAU Academy. Если хочешь, следующим сообщением я дам тебе уже
-            версию с AR-кнопкой и эффектом “панели в воздухе”.
+            Сейчас AR откроет 3D-объект. Дальше мы заменим его на свою BAU-панель.
         </div>
     </div>
 </div>
+
+<model-viewer
+        id="arModel"
+        src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+        ios-src="https://modelviewer.dev/shared-assets/models/Astronaut.usdz"
+        ar
+        ar-modes="scene-viewer quick-look webxr"
+        camera-controls
+        auto-rotate
+        shadow-intensity="1"
+        exposure="1.05"
+        alt="BAU Academy AR">
+</model-viewer>
+
+<script>
+    const arButton = document.getElementById('custom-ar-button');
+    const modelViewer = document.getElementById('arModel');
+
+    arButton.addEventListener('click', async () => {
+        try {
+            if (modelViewer.activateAR) {
+                await modelViewer.activateAR();
+            } else {
+                alert('AR не поддерживается на этом устройстве.');
+            }
+        } catch (e) {
+            console.error(e);
+            alert('Не удалось открыть AR. Попробуй открыть страницу на iPhone Safari или Android Chrome.');
+        }
+    });
+</script>
 </body>
 </html>
